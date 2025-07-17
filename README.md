@@ -1,0 +1,1 @@
+# go_vk_intern
