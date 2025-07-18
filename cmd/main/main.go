@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	authcheck "github.com/K1tten2005/go_vk_intern/internal/pkg/middleware/auth_check"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/middleware/logger"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/router"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -18,6 +19,10 @@ import (
 	authHandler "github.com/K1tten2005/go_vk_intern/internal/pkg/auth/delivery/http"
 	authRepo "github.com/K1tten2005/go_vk_intern/internal/pkg/auth/repo"
 	authUsecase "github.com/K1tten2005/go_vk_intern/internal/pkg/auth/usecase"
+
+	adHandler "github.com/K1tten2005/go_vk_intern/internal/pkg/ad/delivery/http"
+	adRepo "github.com/K1tten2005/go_vk_intern/internal/pkg/ad/repo"
+	adUsecase "github.com/K1tten2005/go_vk_intern/internal/pkg/ad/usecase"
 )
 
 func initDB(logger *slog.Logger) (*pgxpool.Pool, error) {
@@ -62,12 +67,24 @@ func main() {
 	authUsecase := authUsecase.CreateAuthUsecase(authRepo)
 	authHandler := authHandler.CreateAuthHandler(authUsecase)
 
+
+	adRepo := adRepo.CreateAdRepo(pool)
+	adUsecase := adUsecase.CreateAdUsecase(adRepo)
+	adHandler := adHandler.CreateAdHandler(adUsecase)
+
 	r := router.NewRouter()
 
 	r.Use(logMW)
 
 	r.Handle("POST /signin", http.HandlerFunc(authHandler.SignIn))
 	r.Handle("POST /signup", http.HandlerFunc(authHandler.SignUp))
+
+	r.Group(func(r *router.Router) {
+		r.Use(authcheck.AuthMiddleware(loggerVar))
+
+		r.Handle("POST /ad", http.HandlerFunc(adHandler.CreateAd))
+
+	})
 
 	srv := http.Server{
 		Handler:           r,

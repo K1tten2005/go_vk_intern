@@ -1,0 +1,1 @@
+INSERT INTO ads (id, user_id, title, description, price, image_url, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)

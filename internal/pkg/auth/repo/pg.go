@@ -17,9 +17,7 @@ type AuthRepo struct {
 }
 
 func CreateAuthRepo(db pgxtype.Querier) *AuthRepo {
-	return &AuthRepo{
-		db: db,
-	}
+	return &AuthRepo{db: db}
 }
 
 //go:embed sql/insertUser.sql

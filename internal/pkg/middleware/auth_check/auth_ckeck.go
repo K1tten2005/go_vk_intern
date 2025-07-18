@@ -1,31 +1,47 @@
 package authcheck
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
+	"strings"
 
+	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/jwtUtils"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/logger"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/send_err"
-	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		loggerVar := logger.GetLoggerFromContext(c.Request.Context()).With(slog.String("func", logger.GetFuncName()))
+func AuthMiddleware(loggerVar *slog.Logger) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			log := logger.GetLoggerFromContext(r.Context()).With(slog.String("func", logger.GetFuncName()))
 
-		_, err := c.Cookie("VKJWT")
-		if err != nil {
-			if err == http.ErrNoCookie {
-				logger.LogHandlerError(loggerVar, fmt.Errorf("no token: %w", err), http.StatusBadRequest)
-				send_err.SendError(c.Writer, "no token", http.StatusBadRequest)
+			authHeader := r.Header.Get("Authorization")
+			if authHeader == "" {
+				logger.LogHandlerError(log, fmt.Errorf("missing Authorization header"), http.StatusUnauthorized)
+				send_err.SendError(w, "missing Authorization header", http.StatusUnauthorized)
 				return
 			}
-			logger.LogHandlerError(loggerVar, fmt.Errorf("error while parsing cookie: %w", err), http.StatusBadRequest)
-			send_err.SendError(c.Writer, "error while parsing cookie", http.StatusBadRequest)
-			c.Abort()
-			return
-		}
-		c.Next()
+
+			parts := strings.Split(authHeader, " ")
+			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+				logger.LogHandlerError(log, fmt.Errorf("invalid Authorization header format"), http.StatusUnauthorized)
+				send_err.SendError(w, "invalid Authorization header format", http.StatusUnauthorized)
+				return
+			}
+
+			secret := os.Getenv("JWT_SECRET")
+			id, ok := jwtUtils.GetIdFromJWT(parts[1], secret)
+			if !ok {
+				logger.LogHandlerError(log, fmt.Errorf("invalid token"), http.StatusUnauthorized)
+				send_err.SendError(w, "invalid token", http.StatusUnauthorized)
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), jwtUtils.UserIdKey, id)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
 	}
 }

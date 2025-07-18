@@ -24,11 +24,6 @@ func CreateAuthUsecase(repo auth.AuthRepo) *AuthUsecase {
 func (uc *AuthUsecase) SignIn(ctx context.Context, data models.UserReq) (models.UserResp, string, error) {
 	loggerVar := logger.GetLoggerFromContext(ctx).With(slog.String("func", logger.GetFuncName()))
 
-	if !validation.ValidLogin(data.Login) {
-		loggerVar.Error(auth.ErrInvalidLogin.Error())
-		return models.UserResp{}, "", auth.ErrInvalidLogin
-	}
-
 	user, err := uc.repo.SelectUserByLogin(ctx, data.Login)
 	if err != nil {
 		loggerVar.Error(auth.ErrUserNotFound.Error())
@@ -52,16 +47,6 @@ func (uc *AuthUsecase) SignIn(ctx context.Context, data models.UserReq) (models.
 
 func (uc *AuthUsecase) SignUp(ctx context.Context, data models.UserReq) (models.UserResp, string, error) {
 	loggerVar := logger.GetLoggerFromContext(ctx).With(slog.String("func", logger.GetFuncName()))
-
-	if !validation.ValidPassword(data.Password) {
-		loggerVar.Error(auth.ErrInvalidPassword.Error())
-		return models.UserResp{}, "", auth.ErrInvalidPassword
-	}
-
-	if !validation.ValidLogin(data.Login) {
-		loggerVar.Error(auth.ErrInvalidLogin.Error())
-		return models.UserResp{}, "", auth.ErrInvalidLogin
-	}
 
 	salt := make([]byte, 8)
 	rand.Read(salt)

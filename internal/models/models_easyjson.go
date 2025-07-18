@@ -240,7 +240,119 @@ func (v *User) UnmarshalJSON(data []byte) error {
 func (v *User) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels2(l, v)
 }
-func easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels3(in *jlexer.Lexer, out *Advertisement) {
+func easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels3(in *jlexer.Lexer, out *AdResp) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			if data := in.UnsafeBytes(); in.Ok() {
+				in.AddError((out.Id).UnmarshalText(data))
+			}
+		case "title":
+			out.Title = string(in.String())
+		case "description":
+			out.Description = string(in.String())
+		case "price":
+			out.Price = float64(in.Float64())
+		case "image_url":
+			out.ImageURL = string(in.String())
+		case "created_at":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.CreatedAt).UnmarshalJSON(data))
+			}
+		case "is_owner":
+			out.IsOwner = bool(in.Bool())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels3(out *jwriter.Writer, in AdResp) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"id\":"
+		out.RawString(prefix[1:])
+		out.RawText((in.Id).MarshalText())
+	}
+	{
+		const prefix string = ",\"title\":"
+		out.RawString(prefix)
+		out.String(string(in.Title))
+	}
+	{
+		const prefix string = ",\"description\":"
+		out.RawString(prefix)
+		out.String(string(in.Description))
+	}
+	{
+		const prefix string = ",\"price\":"
+		out.RawString(prefix)
+		out.Float64(float64(in.Price))
+	}
+	{
+		const prefix string = ",\"image_url\":"
+		out.RawString(prefix)
+		out.String(string(in.ImageURL))
+	}
+	{
+		const prefix string = ",\"created_at\":"
+		out.RawString(prefix)
+		out.Raw((in.CreatedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"is_owner\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsOwner))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v AdResp) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels3(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v AdResp) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels3(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *AdResp) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels3(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *AdResp) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels3(l, v)
+}
+func easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels4(in *jlexer.Lexer, out *Ad) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -275,6 +387,8 @@ func easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels3(in *jlex
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
 			}
+		case "is_owner":
+			out.IsOwner = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -285,7 +399,7 @@ func easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels3(in *jlex
 		in.Consumed()
 	}
 }
-func easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels3(out *jwriter.Writer, in Advertisement) {
+func easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels4(out *jwriter.Writer, in Ad) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -319,29 +433,34 @@ func easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels3(out *jwr
 		out.RawString(prefix)
 		out.Raw((in.CreatedAt).MarshalJSON())
 	}
+	{
+		const prefix string = ",\"is_owner\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsOwner))
+	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v Advertisement) MarshalJSON() ([]byte, error) {
+func (v Ad) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels3(&w, v)
+	easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels4(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v Advertisement) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels3(w, v)
+func (v Ad) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels4(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *Advertisement) UnmarshalJSON(data []byte) error {
+func (v *Ad) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels3(&r, v)
+	easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels4(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *Advertisement) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels3(l, v)
+func (v *Ad) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels4(l, v)
 }

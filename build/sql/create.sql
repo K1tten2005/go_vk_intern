@@ -6,12 +6,12 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash BYTEA NOT NULL   
 );
 
-CREATE TABLE IF NOT EXISTS advertisements (
+CREATE TABLE IF NOT EXISTS ads (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id),
     title VARCHAR(100) NOT NULL,
     description TEXT,
-    price DECIMAL(10, 2) NOT NULL,
+    price INT NOT NULL,
     image_url TEXT DEFAULT 'default_product.jpg',
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

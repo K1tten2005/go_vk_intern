@@ -10,6 +10,7 @@ import (
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/auth"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/logger"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/send_err"
+	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/validation"
 	"github.com/mailru/easyjson"
 )
 
@@ -33,11 +34,21 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Sanitize()
 
+	if !validation.ValidPassword(req.Password) {
+		logger.LogHandlerError(loggerVar, auth.ErrInvalidPassword, http.StatusBadRequest)
+		send_err.SendError(w, auth.ErrInvalidPassword.Error(), http.StatusBadRequest)
+	}
+
+	if !validation.ValidLogin(req.Login) {
+		logger.LogHandlerError(loggerVar, auth.ErrInvalidLogin, http.StatusBadRequest)
+		send_err.SendError(w, auth.ErrInvalidLogin.Error(), http.StatusBadRequest)
+	}
+
 	user, token, err := h.uc.SignIn(r.Context(), req)
 
 	if err != nil {
 		switch err {
-		case auth.ErrInvalidLogin, auth.ErrUserNotFound, auth.ErrInvalidCredentials:
+		case auth.ErrUserNotFound, auth.ErrInvalidCredentials:
 			logger.LogHandlerError(loggerVar, err, http.StatusBadRequest)
 			send_err.SendError(w, err.Error(), http.StatusBadRequest)
 		case auth.ErrGeneratingToken:
@@ -50,7 +61,7 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Authorization", "Bearer " + token)
+	w.Header().Set("Authorization", "Bearer "+token)
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
@@ -74,6 +85,16 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Sanitize()
 
+	if !validation.ValidPassword(req.Password) {
+		logger.LogHandlerError(loggerVar, auth.ErrInvalidPassword, http.StatusBadRequest)
+		send_err.SendError(w, auth.ErrInvalidPassword.Error(), http.StatusBadRequest)
+	}
+
+	if !validation.ValidLogin(req.Login) {
+		logger.LogHandlerError(loggerVar, auth.ErrInvalidLogin, http.StatusBadRequest)
+		send_err.SendError(w, auth.ErrInvalidLogin.Error(), http.StatusBadRequest)
+	}
+
 	user, token, err := h.uc.SignUp(r.Context(), req)
 
 	if err != nil {
@@ -85,11 +106,11 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 			logger.LogHandlerError(loggerVar, fmt.Errorf("invalid login: %w", err), http.StatusBadRequest)
 			send_err.SendError(w, err.Error(), http.StatusBadRequest)
 		case auth.ErrUserAlreadyExists:
-    		logger.LogHandlerError(loggerVar, err, http.StatusConflict)
-    		send_err.SendError(w, err.Error(), http.StatusConflict)
+			logger.LogHandlerError(loggerVar, err, http.StatusConflict)
+			send_err.SendError(w, err.Error(), http.StatusConflict)
 		case auth.ErrCreatingUser:
-    		logger.LogHandlerError(loggerVar, err, http.StatusInternalServerError)
-    		send_err.SendError(w, err.Error(), http.StatusInternalServerError)
+			logger.LogHandlerError(loggerVar, err, http.StatusInternalServerError)
+			send_err.SendError(w, err.Error(), http.StatusInternalServerError)
 		default:
 			logger.LogHandlerError(loggerVar, fmt.Errorf("unknkown error: %w", err), http.StatusInternalServerError)
 			send_err.SendError(w, "unknown error", http.StatusBadRequest)
@@ -97,7 +118,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Authorization", "Bearer " + token)
+	w.Header().Set("Authorization", "Bearer "+token)
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusCreated)
