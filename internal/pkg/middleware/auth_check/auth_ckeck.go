@@ -40,7 +40,15 @@ func AuthMiddleware(loggerVar *slog.Logger) func(http.Handler) http.Handler {
 				return
 			}
 
+			login, ok := jwtUtils.GetLoginFromJWT(parts[1], secret)
+			if !ok {
+				logger.LogHandlerError(log, fmt.Errorf("invalid token"), http.StatusUnauthorized)
+				send_err.SendError(w, "invalid token", http.StatusUnauthorized)
+				return
+			}
+
 			ctx := context.WithValue(r.Context(), jwtUtils.UserIdKey, id)
+			ctx = context.WithValue(ctx, jwtUtils.UserLoginKey, login)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

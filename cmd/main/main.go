@@ -67,7 +67,6 @@ func main() {
 	authUsecase := authUsecase.CreateAuthUsecase(authRepo)
 	authHandler := authHandler.CreateAuthHandler(authUsecase)
 
-
 	adRepo := adRepo.CreateAdRepo(pool)
 	adUsecase := adUsecase.CreateAdUsecase(adRepo)
 	adHandler := adHandler.CreateAdHandler(adUsecase)
@@ -79,6 +78,7 @@ func main() {
 	r.Handle("POST /signin", http.HandlerFunc(authHandler.SignIn))
 	r.Handle("POST /signup", http.HandlerFunc(authHandler.SignUp))
 
+	r.Handle("GET /ad", http.HandlerFunc(adHandler.GetAds))
 	r.Group(func(r *router.Router) {
 		r.Use(authcheck.AuthMiddleware(loggerVar))
 

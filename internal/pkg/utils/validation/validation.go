@@ -3,8 +3,12 @@ package validation
 import (
 	"bytes"
 	"errors"
+	"fmt"
+	"io"
+	"net/http"
 	"net/url"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/K1tten2005/go_vk_intern/internal/models"
@@ -19,10 +23,12 @@ const (
 	maxTitleLength       = 100
 	maxDescriptionLength = 700
 	maxImageURLLength    = 300
-	maxPrice             = 100000000
+	MaxPrice             = 100000000
+	maxImageSizeBytes    = 10 * 1024 * 1024
+	allowedChars         = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
 )
 
-const allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+var allowedImageExt = []string{".jpg", ".jpeg", ".png", ".webp"}
 
 func HashPassword(salt []byte, plainPassword string) []byte {
 	hashedPass := argon2.IDKey([]byte(plainPassword), salt, 1, 64*1024, 4, 32)
@@ -71,13 +77,40 @@ func ValidImageURL(link string) bool {
 	if err != nil || u.Scheme == "" || u.Host == "" {
 		return false
 	}
-	return strings.HasSuffix(strings.ToLower(u.Path), ".jpg") ||
-		strings.HasSuffix(strings.ToLower(u.Path), ".jpeg") ||
-		strings.HasSuffix(strings.ToLower(u.Path), ".png")
+	link = strings.ToLower(link)
+	for _, ext := range allowedImageExt {
+		if strings.HasSuffix(link, ext) {
+			return true
+		}
+	}
+	return false
+}
+
+func ImageSizeUnderLimit(link string) bool {
+	client := http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	resp, err := client.Get(link)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	defer resp.Body.Close()
+
+	limited := io.LimitReader(resp.Body, maxImageSizeBytes+1)
+
+	n, err := io.Copy(io.Discard, limited)
+	if err != nil {
+		fmt.Printf("Image size for %s is %d bytes\n", link, n)
+		return false
+	}
+
+	return n <= int64(maxImageSizeBytes)
 }
 
 func ValidPrice(price int) bool {
-	return price >= 0 && price <= maxPrice
+	return price >= 0 && price <= MaxPrice
 }
 
 func ValidateAd(ad models.Ad) error {
@@ -89,6 +122,9 @@ func ValidateAd(ad models.Ad) error {
 	}
 	if !ValidImageURL(ad.ImageURL) {
 		return errors.New("invalid image url")
+	}
+	if !ImageSizeUnderLimit(ad.ImageURL) {
+		return errors.New("image size exceeds limit")
 	}
 	if !ValidPrice(ad.Price) {
 		return errors.New("invalid price")

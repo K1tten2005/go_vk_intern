@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/K1tten2005/go_vk_intern/internal/models"
-	"github.com/satori/uuid"
 )
 
 var (
@@ -13,9 +12,11 @@ var (
 )
 
 type AdUsecase interface {
-	CreateAd(ctx context.Context, ad models.Ad, userId uuid.UUID) (models.Ad, error)
+	CreateAd(ctx context.Context, ad models.Ad) (models.Ad, error)
+	GetAds(ctx context.Context, filter models.Filter) ([]models.Ad, error)
 }
 
 type AdRepo interface {
-	InsertAd(ctx context.Context, ad models.Ad, userId uuid.UUID) error
+	InsertAd(ctx context.Context, ad models.Ad) error
+	SelectAds(ctx context.Context, filter models.Filter) ([]models.Ad, error)
 }
