@@ -45,14 +45,25 @@ func initDB(logger *slog.Logger) (*pgxpool.Pool, error) {
 }
 
 func main() {
-	logFile, err := os.OpenFile(os.Getenv("MAIN_LOG_FILE"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	logPath := os.Getenv("MAIN_LOG_FILE")
+	logDir := "./logs"
+
+	err := os.MkdirAll(logDir, os.ModePerm)
+	if err != nil {
+		fmt.Println("failed to create logs directory: " + err.Error())
+		return
+	}
+
+	logFile, err := os.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Println("error opening log file: " + err.Error())
 		return
 	}
 	defer logFile.Close()
 
-	loggerVar := slog.New(slog.NewJSONHandler(io.MultiWriter(logFile, os.Stdout), &slog.HandlerOptions{Level: slog.LevelInfo}))
+	loggerVar := slog.New(slog.NewJSONHandler(io.MultiWriter(logFile, os.Stdout), &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}))
 
 	pool, err := initDB(loggerVar)
 	if err != nil {
