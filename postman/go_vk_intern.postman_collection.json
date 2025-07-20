@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "2e294cc2-86d6-46b8-8df0-e71dd2a97644",
+		"name": "go_vk_intern",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39034495"
+	},
+	"item": [
+		{
+			"name": "signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test2025\",\n    \"password\": \"Test2025!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test2026\",\n    \"password\": \"Test2026!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ad",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMxMDgxMDUsImlkIjoiOWFlYzE1YzItZDJmYi00NmU4LWFjYWQtZjAzMTM5ZjMyNzI0IiwibG9naW4iOiJ0ZXN0MjAyNiJ9.kRYCFlwVAjWUykaVEYBl-d6zUz9t576Rr_IPYzNFbmY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Котик\",\n  \"description\": \"Очень милый котик, держать его на руках - одно удовольствие\",\n  \"price\": 20000,\n  \"image_url\": \"https://cs14.pikabu.ru/post_img/big/2023/04/20/3/1681956381171584576.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ad",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ad"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ad",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMxMDYzODksImlkIjoiNzZlZjY0NmYtNDgwNy00MDdkLWE4ZWUtNzAxNTU2OGZjYzJkIiwibG9naW4iOiJ0ZXN0MjAyNSJ9.LBc6udZXhucTFABU1Htv-4WJnWOTkyYot57z5liLSzo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ad?page=&limit=&sort_by=created_at&order=desc&price_min=&price_max=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ad"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": ""
+						},
+						{
+							"key": "limit",
+							"value": ""
+						},
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "order",
+							"value": "desc"
+						},
+						{
+							"key": "price_min",
+							"value": ""
+						},
+						{
+							"key": "price_max",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
