@@ -1,0 +1,171 @@
+{
+	"info": {
+		"_postman_id": "5d6db9be-6bbd-403c-885e-d8b7d236cddc",
+		"name": "go_vk_intern(public)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39034495"
+	},
+	"item": [
+		{
+			"name": "ad",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMxMjI0NDAsImlkIjoiMjM3YmUxNTktNGE5Zi00M2VlLTliMzktZTkyODhhYjJjMTMyIiwibG9naW4iOiJ0ZXN0MjAyNSJ9.GxUMN2W01BKlHmOHJZBafe0urPXNEX9OqNLdfPR00Fo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://govkintern-production.up.railway.app/ad?page=&limit=&sort_by=created_at&order=&price_min=1&price_max=",
+					"protocol": "https",
+					"host": [
+						"govkintern-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"ad"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": ""
+						},
+						{
+							"key": "limit",
+							"value": ""
+						},
+						{
+							"key": "sort_by",
+							"value": "created_at"
+						},
+						{
+							"key": "order",
+							"value": ""
+						},
+						{
+							"key": "price_min",
+							"value": "1"
+						},
+						{
+							"key": "price_max",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ad",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMxMjI0NDAsImlkIjoiMjM3YmUxNTktNGE5Zi00M2VlLTliMzktZTkyODhhYjJjMTMyIiwibG9naW4iOiJ0ZXN0MjAyNSJ9.GxUMN2W01BKlHmOHJZBafe0urPXNEX9OqNLdfPR00Fo",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"Котик\",\n  \"description\": \"Очень милый котик, держать его на руках - одно удовольствие\",\n  \"price\": 20003,\n  \"image_url\": \"https://cs14.pikabu.ru/post_img/big/2023/04/20/3/1681956381171584576.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://govkintern-production.up.railway.app/ad",
+					"protocol": "https",
+					"host": [
+						"govkintern-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"ad"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test2025\",\n    \"password\": \"Test2025!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://govkintern-production.up.railway.app/signup",
+					"protocol": "https",
+					"host": [
+						"govkintern-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test2025\",\n    \"password\": \"Test2025!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://govkintern-production.up.railway.app/signin",
+					"protocol": "https",
+					"host": [
+						"govkintern-production",
+						"up",
+						"railway",
+						"app"
+					],
+					"path": [
+						"signin"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
