@@ -26,6 +26,10 @@ const (
 	MaxPrice             = 100000000
 	maxImageSizeBytes    = 10 * 1024 * 1024
 	allowedChars         = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
+
+	allowedSymbolsForText = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя" +
+	"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ" +
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_#*,./"
 )
 
 var allowedImageExt = []string{".jpg", ".jpeg", ".png", ".webp"}
@@ -42,19 +46,12 @@ func CheckPassword(passHash []byte, plainPassword string) bool {
 	return bytes.Equal(userPassHash, passHash)
 }
 
-func isAllowedRune(r rune) bool {
-	return unicode.IsLetter(r) ||
-		unicode.IsDigit(r) ||
-		unicode.IsSpace(r) ||
-		strings.ContainsRune(".,!?()[]{}:;-_+=@#%&*\"'/\\", r)
-}
-
 func ValidTextContent(s string, maxLen int) bool {
 	if len(s) == 0 || len(s) > maxLen {
 		return false
 	}
 	for _, r := range s {
-		if !isAllowedRune(r) {
+		if !strings.ContainsRune(allowedSymbolsForText, r) {
 			return false
 		}
 	}

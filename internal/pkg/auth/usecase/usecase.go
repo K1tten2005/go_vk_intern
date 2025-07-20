@@ -68,7 +68,7 @@ func (uc *AuthUsecase) SignUp(ctx context.Context, data models.UserReq) (models.
 			loggerVar.Error(err.Error())
 			return models.UserResp{}, "", auth.ErrUserAlreadyExists
 		}
-
+    	return models.UserResp{}, "", err
 	}
 
 	token, err := jwtUtils.GenerateToken(newUser)

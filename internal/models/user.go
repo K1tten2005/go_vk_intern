@@ -23,6 +23,7 @@ type UserReq struct {
 type UserResp struct {
 	Id    uuid.UUID `json:"id"`
 	Login string    `json:"login"`
+	Token string    `json:"token"`
 }
 
 func (u *User) Sanitize() {

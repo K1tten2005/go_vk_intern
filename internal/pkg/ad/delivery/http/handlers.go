@@ -75,12 +75,13 @@ func (h *AdHandler) CreateAd(w http.ResponseWriter, r *http.Request) {
 			send_err.SendError(w, err.Error(), http.StatusInternalServerError)
 		default:
 			logger.LogHandlerError(loggerVar, fmt.Errorf("unknkown error: %w", err), http.StatusInternalServerError)
-			send_err.SendError(w, "unknown error", http.StatusBadRequest)
+			send_err.SendError(w, "unknown error", http.StatusInternalServerError)
 		}
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	adResp := models.AdResp{
 		Id:          advertisement.Id,
 		Title:       advertisement.Title,
@@ -95,7 +96,6 @@ func (h *AdHandler) CreateAd(w http.ResponseWriter, r *http.Request) {
 		send_err.SendError(w, "data error", http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
 	logger.LogHandlerInfo(loggerVar, "Successful", http.StatusCreated)
 }
 
@@ -107,17 +107,17 @@ func (h *AdHandler) GetAds(w http.ResponseWriter, r *http.Request) {
 	authHeader := r.Header.Get("Authorization")
 	if strings.HasPrefix(authHeader, "Bearer ") {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
-		secret := os.Getenv("JWT_SECRET")
 
-		userIdStr, ok := jwtUtils.GetIdFromJWT(token, secret)
+		userIdStr, ok := jwtUtils.GetIdFromJWT(token, h.secret)
 		if !ok {
-			userId = uuid.Nil
+			logger.LogHandlerError(loggerVar, fmt.Errorf("invalid token"), http.StatusUnauthorized)
+			send_err.SendError(w, "invalid token", http.StatusUnauthorized)
 		} else {
 			var err error
 			userId, err = uuid.FromString(userIdStr)
 			if err != nil {
-				logger.LogHandlerError(loggerVar, err, http.StatusInternalServerError)
-				send_err.SendError(w, "internal server error", http.StatusInternalServerError)
+				logger.LogHandlerError(loggerVar, fmt.Errorf("invalid token"), http.StatusUnauthorized)
+				send_err.SendError(w, "invalid token", http.StatusUnauthorized)
 				return
 			}
 		}

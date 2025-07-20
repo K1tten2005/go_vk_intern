@@ -37,11 +37,13 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	if !validation.ValidPassword(req.Password) {
 		logger.LogHandlerError(loggerVar, auth.ErrInvalidPassword, http.StatusBadRequest)
 		send_err.SendError(w, auth.ErrInvalidPassword.Error(), http.StatusBadRequest)
+		return
 	}
 
 	if !validation.ValidLogin(req.Login) {
 		logger.LogHandlerError(loggerVar, auth.ErrInvalidLogin, http.StatusBadRequest)
 		send_err.SendError(w, auth.ErrInvalidLogin.Error(), http.StatusBadRequest)
+		return
 	}
 
 	user, token, err := h.uc.SignIn(r.Context(), req)
@@ -56,12 +58,12 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 			send_err.SendError(w, err.Error(), http.StatusInternalServerError)
 		default:
 			logger.LogHandlerError(loggerVar, fmt.Errorf("unknkown error: %w", err), http.StatusInternalServerError)
-			send_err.SendError(w, "unknown error", http.StatusBadRequest)
+			send_err.SendError(w, "unknown error", http.StatusInternalServerError)
 		}
 		return
 	}
 
-	w.Header().Set("Authorization", "Bearer "+token)
+	user.Token = token
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusOK)
@@ -88,11 +90,13 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	if !validation.ValidPassword(req.Password) {
 		logger.LogHandlerError(loggerVar, auth.ErrInvalidPassword, http.StatusBadRequest)
 		send_err.SendError(w, auth.ErrInvalidPassword.Error(), http.StatusBadRequest)
+		return
 	}
 
 	if !validation.ValidLogin(req.Login) {
 		logger.LogHandlerError(loggerVar, auth.ErrInvalidLogin, http.StatusBadRequest)
 		send_err.SendError(w, auth.ErrInvalidLogin.Error(), http.StatusBadRequest)
+		return
 	}
 
 	user, token, err := h.uc.SignUp(r.Context(), req)
@@ -113,12 +117,12 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 			send_err.SendError(w, err.Error(), http.StatusInternalServerError)
 		default:
 			logger.LogHandlerError(loggerVar, fmt.Errorf("unknkown error: %w", err), http.StatusInternalServerError)
-			send_err.SendError(w, "unknown error", http.StatusBadRequest)
+			send_err.SendError(w, "unknown error", http.StatusInternalServerError)
 		}
 		return
 	}
 
-	w.Header().Set("Authorization", "Bearer "+token)
+	user.Token = token
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusCreated)

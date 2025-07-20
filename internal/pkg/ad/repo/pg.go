@@ -56,7 +56,7 @@ func (r *AdRepo) SelectAds(ctx context.Context, filter models.Filter) ([]models.
 		var ad models.Ad
 		if err := rows.Scan(&ad.Id, &ad.UserId, &ad.Title, &ad.Description, &ad.Price, &ad.ImageURL, &ad.CreatedAt, &ad.AuthorLogin); err != nil {
 			loggerVar.Error("scan error: " + err.Error())
-			continue
+			return nil, err
 		}
 		ads = append(ads, ad)
 	}
