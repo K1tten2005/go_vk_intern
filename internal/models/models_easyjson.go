@@ -42,6 +42,8 @@ func easyjsonD2b7633eDecodeGithubComK1tten2005GoVkInternInternalModels(in *jlexe
 			}
 		case "login":
 			out.Login = string(in.String())
+		case "token":
+			out.Token = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -65,6 +67,11 @@ func easyjsonD2b7633eEncodeGithubComK1tten2005GoVkInternInternalModels(out *jwri
 		const prefix string = ",\"login\":"
 		out.RawString(prefix)
 		out.String(string(in.Login))
+	}
+	{
+		const prefix string = ",\"token\":"
+		out.RawString(prefix)
+		out.String(string(in.Token))
 	}
 	out.RawByte('}')
 }
