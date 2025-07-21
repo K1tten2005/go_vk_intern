@@ -84,7 +84,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "Не найдено", http.StatusNotFound)
+		http.Error(w, "Not found", http.StatusNotFound)
 	})
 	r.Use(logMW)
 
