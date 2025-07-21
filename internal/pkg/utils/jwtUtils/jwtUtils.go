@@ -88,9 +88,9 @@ func GetLoginFromContext(ctx context.Context) (string, bool) {
 	return login, ok
 }
 
-func GenerateJWTForTest(t *testing.T, id uuid.UUID, secret string) string {
+func GenerateJWTForTest(t *testing.T, login string, secret string) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  id,
+		"login":  login,
 		"exp": time.Now().Add(time.Hour).Unix(),
 	})
 	tokenStr, err := token.SignedString([]byte(secret))

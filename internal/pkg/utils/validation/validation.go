@@ -29,7 +29,7 @@ const (
 
 	allowedSymbolsForText = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя" +
 	"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ" +
-	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_#*,./"
+	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_#*,./!?: #*,. "
 )
 
 var allowedImageExt = []string{".jpg", ".jpeg", ".png", ".webp"}

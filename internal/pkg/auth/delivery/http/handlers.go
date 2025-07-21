@@ -34,6 +34,9 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Sanitize()
 
+	fmt.Println("Login (raw):", req.Login)
+	fmt.Println("Password (raw):", req.Password)
+
 	if !validation.ValidPassword(req.Password) {
 		logger.LogHandlerError(loggerVar, auth.ErrInvalidPassword, http.StatusBadRequest)
 		send_err.SendError(w, auth.ErrInvalidPassword.Error(), http.StatusBadRequest)
@@ -72,7 +75,7 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 		send_err.SendError(w, "data error", http.StatusInternalServerError)
 		return
 	}
-	logger.LogHandlerInfo(loggerVar, "Successful", http.StatusCreated)
+	logger.LogHandlerInfo(loggerVar, "Successful", http.StatusOK)
 }
 
 func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
@@ -82,7 +85,7 @@ func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
 	err := easyjson.UnmarshalFromReader(r.Body, &req)
 	if err != nil {
 		logger.LogHandlerError(loggerVar, fmt.Errorf("error while unmarshalling JSON: %w", err), http.StatusBadRequest)
-		send_err.SendError(w, "incorect request", http.StatusBadRequest)
+		send_err.SendError(w, "incorrect request", http.StatusBadRequest)
 		return
 	}
 	req.Sanitize()
