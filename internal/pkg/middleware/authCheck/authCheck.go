@@ -1,4 +1,4 @@
-package authcheck
+package authCheck
 
 import (
 	"context"
@@ -10,10 +10,11 @@ import (
 
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/jwtUtils"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/logger"
-	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/send_err"
+	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/sendErr"
+	"github.com/gorilla/mux"
 )
 
-func AuthMiddleware(loggerVar *slog.Logger) func(http.Handler) http.Handler {
+func AuthMiddleware(loggerVar *slog.Logger) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			loggerVar := logger.GetLoggerFromContext(r.Context()).With(slog.String("func", logger.GetFuncName()))
@@ -21,14 +22,14 @@ func AuthMiddleware(loggerVar *slog.Logger) func(http.Handler) http.Handler {
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
 				logger.LogHandlerError(loggerVar, fmt.Errorf("missing Authorization header"), http.StatusUnauthorized)
-				send_err.SendError(w, "missing Authorization header", http.StatusUnauthorized)
+				sendErr.SendError(w, "missing Authorization header", http.StatusUnauthorized)
 				return
 			}
 
 			parts := strings.Split(authHeader, " ")
 			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
 				logger.LogHandlerError(loggerVar, fmt.Errorf("invalid Authorization header format"), http.StatusUnauthorized)
-				send_err.SendError(w, "invalid Authorization header format", http.StatusUnauthorized)
+				sendErr.SendError(w, "invalid Authorization header format", http.StatusUnauthorized)
 				return
 			}
 
@@ -36,14 +37,14 @@ func AuthMiddleware(loggerVar *slog.Logger) func(http.Handler) http.Handler {
 			id, ok := jwtUtils.GetIdFromJWT(parts[1], secret)
 			if !ok {
 				logger.LogHandlerError(loggerVar, fmt.Errorf("invalid token"), http.StatusUnauthorized)
-				send_err.SendError(w, "invalid token", http.StatusUnauthorized)
+				sendErr.SendError(w, "invalid token", http.StatusUnauthorized)
 				return
 			}
 
 			login, ok := jwtUtils.GetLoginFromJWT(parts[1], secret)
 			if !ok {
 				logger.LogHandlerError(loggerVar, fmt.Errorf("invalid token"), http.StatusUnauthorized)
-				send_err.SendError(w, "invalid token", http.StatusUnauthorized)
+				sendErr.SendError(w, "invalid token", http.StatusUnauthorized)
 				return
 			}
 

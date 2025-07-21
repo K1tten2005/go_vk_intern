@@ -1,4 +1,4 @@
-package send_err
+package sendErr
 
 import (
 	"encoding/json"

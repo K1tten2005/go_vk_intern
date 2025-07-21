@@ -28,11 +28,9 @@ const (
 	allowedChars         = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-"
 
 	allowedSymbolsForText = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя" +
-	"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ" +
-	"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_#*,./!?: #*,. "
+		"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ" +
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_#*,./!?: #*,. "
 )
-
-var allowedImageExt = []string{".jpg", ".jpeg", ".png", ".webp"}
 
 func HashPassword(salt []byte, plainPassword string) []byte {
 	hashedPass := argon2.IDKey([]byte(plainPassword), salt, 1, 64*1024, 4, 32)
@@ -70,17 +68,35 @@ func ValidImageURL(link string) bool {
 	if len(link) == 0 || len(link) > maxImageURLLength {
 		return false
 	}
+
 	u, err := url.ParseRequestURI(link)
 	if err != nil || u.Scheme == "" || u.Host == "" {
 		return false
 	}
-	link = strings.ToLower(link)
-	for _, ext := range allowedImageExt {
-		if strings.HasSuffix(link, ext) {
-			return true
-		}
+
+	client := http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Get(link)
+	if err != nil {
+		fmt.Println("GET request failed:", err)
+		return false
 	}
-	return false
+	defer resp.Body.Close()
+
+	head := make([]byte, 512)
+	n, err := io.ReadFull(io.LimitReader(resp.Body, 512), head)
+	if err != nil && err != io.ErrUnexpectedEOF {
+		fmt.Println("Error reading image head:", err)
+		return false
+	}
+
+	contentType := http.DetectContentType(head[:n])
+	switch contentType {
+	case "image/jpeg", "image/png", "image/webp":
+		return true
+	default:
+		fmt.Println("Invalid image content type:", contentType)
+		return false
+	}
 }
 
 func ImageSizeUnderLimit(link string) bool {

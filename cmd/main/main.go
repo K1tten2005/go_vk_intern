@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	authcheck "github.com/K1tten2005/go_vk_intern/internal/pkg/middleware/auth_check"
+	"github.com/K1tten2005/go_vk_intern/internal/pkg/middleware/authCheck"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/middleware/logger"
-	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/router"
+	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v4/pgxpool"
 
 	authHandler "github.com/K1tten2005/go_vk_intern/internal/pkg/auth/delivery/http"
@@ -82,20 +82,20 @@ func main() {
 	adUsecase := adUsecase.CreateAdUsecase(adRepo)
 	adHandler := adHandler.CreateAdHandler(adUsecase)
 
-	r := router.NewRouter()
-
+	r := mux.NewRouter()
+	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Не найдено", http.StatusNotFound)
+	})
 	r.Use(logMW)
 
-	r.Handle("POST /signin", http.HandlerFunc(authHandler.SignIn))
-	r.Handle("POST /signup", http.HandlerFunc(authHandler.SignUp))
+	publicRoutes := r.PathPrefix("/api").Subrouter()
+	publicRoutes.HandleFunc("/signin", authHandler.SignIn).Methods(http.MethodPost)
+	publicRoutes.HandleFunc("/signup", authHandler.SignUp).Methods(http.MethodPost)
+	publicRoutes.HandleFunc("/ad", adHandler.GetAds).Methods(http.MethodGet)
 
-	r.Handle("GET /ad", http.HandlerFunc(adHandler.GetAds))
-	r.Group(func(r *router.Router) {
-		r.Use(authcheck.AuthMiddleware(loggerVar))
-
-		r.Handle("POST /ad", http.HandlerFunc(adHandler.CreateAd))
-
-	})
+	protectedRoutes := r.PathPrefix("/api").Subrouter()
+	protectedRoutes.Use(authCheck.AuthMiddleware(loggerVar))
+	protectedRoutes.HandleFunc("/ad", adHandler.CreateAd).Methods(http.MethodPost)
 
 	srv := http.Server{
 		Handler:           r,

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/satori/uuid"
 )
 
@@ -12,7 +13,7 @@ type ctxKey string
 
 const LoggerKey ctxKey = "logger"
 
-func CreateLoggerMiddleware(loggerVar *slog.Logger) func(http.Handler) http.Handler {
+func CreateLoggerMiddleware(loggerVar *slog.Logger) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := context.WithValue(r.Context(), LoggerKey, loggerVar.With(slog.String("ID", uuid.NewV4().String())))

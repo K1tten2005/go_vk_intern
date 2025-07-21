@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -13,7 +14,7 @@ import (
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/ad"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/jwtUtils"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/logger"
-	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/send_err"
+	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/sendErr"
 	"github.com/K1tten2005/go_vk_intern/internal/pkg/utils/validation"
 	"github.com/mailru/easyjson"
 	"github.com/satori/uuid"
@@ -34,7 +35,7 @@ func (h *AdHandler) CreateAd(w http.ResponseWriter, r *http.Request) {
 	var req models.AdReq
 	if err := easyjson.UnmarshalFromReader(r.Body, &req); err != nil {
 		logger.LogHandlerError(loggerVar, fmt.Errorf("error while unmarshaling JSON: %w", err), http.StatusBadRequest)
-		send_err.SendError(w, "incorrect request", http.StatusBadRequest)
+		sendErr.SendError(w, "incorrect request", http.StatusBadRequest)
 		return
 	}
 
@@ -47,7 +48,7 @@ func (h *AdHandler) CreateAd(w http.ResponseWriter, r *http.Request) {
 	err := validation.ValidateAd(adReq)
 	if err != nil {
 		logger.LogHandlerError(loggerVar, err, http.StatusBadRequest)
-		send_err.SendError(w, err.Error(), http.StatusBadRequest)
+		sendErr.SendError(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	adReq.Sanitize()
@@ -55,13 +56,13 @@ func (h *AdHandler) CreateAd(w http.ResponseWriter, r *http.Request) {
 	userId, ok := jwtUtils.GetIdFromContext(r.Context())
 	if !ok {
 		logger.LogHandlerError(loggerVar, errors.New("error while getting user id from context"), http.StatusInternalServerError)
-		send_err.SendError(w, "server error", http.StatusInternalServerError)
+		sendErr.SendError(w, "server error", http.StatusInternalServerError)
 		return
 	}
 	login, ok := jwtUtils.GetLoginFromContext(r.Context())
 	if !ok {
 		logger.LogHandlerError(loggerVar, errors.New("error while getting user login from context"), http.StatusInternalServerError)
-		send_err.SendError(w, "server error", http.StatusInternalServerError)
+		sendErr.SendError(w, "server error", http.StatusInternalServerError)
 		return
 	}
 	adReq.UserId = userId
@@ -72,10 +73,10 @@ func (h *AdHandler) CreateAd(w http.ResponseWriter, r *http.Request) {
 		switch err {
 		case ad.ErrCreatingAd:
 			logger.LogHandlerError(loggerVar, err, http.StatusInternalServerError)
-			send_err.SendError(w, err.Error(), http.StatusInternalServerError)
+			sendErr.SendError(w, err.Error(), http.StatusInternalServerError)
 		default:
 			logger.LogHandlerError(loggerVar, fmt.Errorf("unknkown error: %w", err), http.StatusInternalServerError)
-			send_err.SendError(w, "unknown error", http.StatusInternalServerError)
+			sendErr.SendError(w, "unknown error", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -91,34 +92,30 @@ func (h *AdHandler) CreateAd(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:   advertisement.CreatedAt,
 		AuthorLogin: advertisement.AuthorLogin,
 	}
-	if _, err := easyjson.MarshalToWriter(adResp, w); err != nil {
+
+	data, err := json.Marshal(adResp)
+	if err != nil{
 		logger.LogHandlerError(loggerVar, fmt.Errorf("error marshaling JSON: %w", err), http.StatusInternalServerError)
-		send_err.SendError(w, "data error", http.StatusInternalServerError)
+		sendErr.SendError(w, "data error", http.StatusInternalServerError)
 		return
 	}
+	w.Write(data)
 	logger.LogHandlerInfo(loggerVar, "Successful", http.StatusCreated)
 }
 
 func (h *AdHandler) GetAds(w http.ResponseWriter, r *http.Request) {
 	loggerVar := logger.GetLoggerFromContext(r.Context()).With(slog.String("func", logger.GetFuncName()))
 
-
-	var userId uuid.UUID 
+	var userId uuid.UUID
 	authHeader := r.Header.Get("Authorization")
 	if strings.HasPrefix(authHeader, "Bearer ") {
 		token := strings.TrimPrefix(authHeader, "Bearer ")
-
 		userIdStr, ok := jwtUtils.GetIdFromJWT(token, h.secret)
-		if !ok {
-			logger.LogHandlerError(loggerVar, fmt.Errorf("invalid token"), http.StatusUnauthorized)
-			send_err.SendError(w, "invalid token", http.StatusUnauthorized)
-		} else {
+		if ok {
 			var err error
 			userId, err = uuid.FromString(userIdStr)
 			if err != nil {
-				logger.LogHandlerError(loggerVar, fmt.Errorf("invalid token"), http.StatusUnauthorized)
-				send_err.SendError(w, "invalid token", http.StatusUnauthorized)
-				return
+				userId = uuid.Nil 
 			}
 		}
 	}
@@ -168,7 +165,7 @@ func (h *AdHandler) GetAds(w http.ResponseWriter, r *http.Request) {
 	ads, err := h.uc.GetAds(r.Context(), filter)
 	if err != nil {
 		logger.LogHandlerError(loggerVar, err, http.StatusInternalServerError)
-		send_err.SendError(w, "failed to load ads", http.StatusInternalServerError)
+		sendErr.SendError(w, "failed to load ads", http.StatusInternalServerError)
 		return
 	}
 
@@ -189,8 +186,12 @@ func (h *AdHandler) GetAds(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	if _, err := easyjson.MarshalToWriter(resp, w); err != nil {
+	data, err := json.Marshal(resp)
+	if err != nil {
 		logger.LogHandlerError(loggerVar, fmt.Errorf("marshal error: %w", err), http.StatusInternalServerError)
-		send_err.SendError(w, "response error", http.StatusInternalServerError)
+		sendErr.SendError(w, "response error", http.StatusInternalServerError)
 	}
+	w.Write(data)
+	logger.LogHandlerInfo(loggerVar, "Successful", http.StatusCreated)
+
 }
