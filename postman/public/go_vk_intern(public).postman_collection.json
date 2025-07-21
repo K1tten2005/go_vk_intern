@@ -30,7 +30,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://govkintern-production.up.railway.app/ad?page=&limit=&sort_by=created_at&order=&price_min=1&price_max=",
+					"raw": "https://govkintern-production.up.railway.app/api/ad?page=&limit=&sort_by=created_at&order=&price_min=1&price_max=",
 					"protocol": "https",
 					"host": [
 						"govkintern-production",
@@ -39,6 +39,7 @@
 						"app"
 					],
 					"path": [
+						"api",
 						"ad"
 					],
 					"query": [
@@ -92,7 +93,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://govkintern-production.up.railway.app/ad",
+					"raw": "https://govkintern-production.up.railway.app/api/ad",
 					"protocol": "https",
 					"host": [
 						"govkintern-production",
@@ -101,6 +102,7 @@
 						"app"
 					],
 					"path": [
+						"api",
 						"ad"
 					]
 				}
@@ -122,7 +124,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://govkintern-production.up.railway.app/signup",
+					"raw": "https://govkintern-production.up.railway.app/api/signup",
 					"protocol": "https",
 					"host": [
 						"govkintern-production",
@@ -131,6 +133,7 @@
 						"app"
 					],
 					"path": [
+						"api",
 						"signup"
 					]
 				}
@@ -152,7 +155,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://govkintern-production.up.railway.app/signin",
+					"raw": "https://govkintern-production.up.railway.app/api/signin",
 					"protocol": "https",
 					"host": [
 						"govkintern-production",
@@ -161,6 +164,7 @@
 						"app"
 					],
 					"path": [
+						"api",
 						"signin"
 					]
 				}

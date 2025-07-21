@@ -58,8 +58,7 @@ func (uc *AuthUsecase) SignUp(ctx context.Context, data models.UserReq) (models.
 		PasswordHash: hashedPassword,
 	}
 
-	err := uc.repo.InsertUser(ctx, newUser)
-	if err != nil {
+	if err := uc.repo.InsertUser(ctx, newUser); err != nil {
 		switch err {
 		case auth.ErrCreatingUser:
 			loggerVar.Error(err.Error())

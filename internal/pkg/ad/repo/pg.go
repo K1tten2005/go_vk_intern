@@ -42,21 +42,21 @@ func (r *AdRepo) SelectAds(ctx context.Context, filter models.Filter) ([]models.
 	loggerVar := logger.GetLoggerFromContext(ctx).With(slog.String("func", logger.GetFuncName()))
 
 	query := fmt.Sprintf(selectAds, filter.SortBy, filter.Order)
+	ads := make([]models.Ad, 0, filter.Limit)
 
 	offset := (filter.Page - 1) * filter.Limit
 	rows, err := r.db.Query(ctx, query, filter.PriceMin, filter.PriceMax, filter.Limit, offset)
 	if err != nil {
 		loggerVar.Error("query error: " + err.Error())
-		return nil, err
+		return ads, err
 	}
 	defer rows.Close()
 
-	var ads []models.Ad
 	for rows.Next() {
 		var ad models.Ad
 		if err := rows.Scan(&ad.Id, &ad.UserId, &ad.Title, &ad.Description, &ad.Price, &ad.ImageURL, &ad.CreatedAt, &ad.AuthorLogin); err != nil {
 			loggerVar.Error("scan error: " + err.Error())
-			return nil, err
+			return ads, err
 		}
 		ads = append(ads, ad)
 	}

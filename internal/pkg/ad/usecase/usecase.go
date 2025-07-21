@@ -25,8 +25,7 @@ func (uc *AdUsecase) CreateAd(ctx context.Context, data models.Ad) (models.Ad, e
 	data.CreatedAt = time.Now()
 	data.Id = uuid.NewV4()
 
-	err := uc.repo.InsertAd(ctx, data)
-	if err != nil {
+	if err := uc.repo.InsertAd(ctx, data); err != nil {
 		loggerVar.Error(err.Error())
 		return models.Ad{}, err
 	}
@@ -41,7 +40,7 @@ func (uc *AdUsecase) GetAds(ctx context.Context, filter models.Filter) ([]models
 	ads, err := uc.repo.SelectAds(ctx, filter)
 	if err != nil {
 		loggerVar.Error("error fetching ads: " + err.Error())
-		return nil, err
+		return ads, err
 	}
 
 	return ads, nil

@@ -47,12 +47,10 @@ func (repo *AuthRepo) SelectUserByLogin(ctx context.Context, login string) (mode
 	loggerVar := logger.GetLoggerFromContext(ctx).With(slog.String("func", logger.GetFuncName()))
 
 	resultUser := models.User{Login: login}
-	err := repo.db.QueryRow(ctx, selectUserByLogin, login).Scan(
+	if err := repo.db.QueryRow(ctx, selectUserByLogin, login).Scan(
 		&resultUser.Id,
 		&resultUser.PasswordHash,
-	)
-
-	if err != nil {
+	); err != nil {
 		loggerVar.Error(err.Error())
 		return models.User{}, err
 	}

@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "2e294cc2-86d6-46b8-8df0-e71dd2a97644",
-		"name": "go_vk_intern",
+		"name": "go_vk_intern(local)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "39034495"
 	},
@@ -21,13 +21,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/signin",
+					"raw": "http://localhost:8080/api/signin",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"signin"
 					]
 				}
@@ -41,7 +42,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"login\": \"test2026\",\n    \"password\": \"Test2026!\"\n}",
+					"raw": "{\n    \"login\": \"test2027\",\n    \"password\": \"Test2027!\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -49,13 +50,16 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/signup",
-					"protocol": "http",
+					"raw": "https://govkintern-production.up.railway.app/api/signup",
+					"protocol": "https",
 					"host": [
-						"localhost"
+						"govkintern-production",
+						"up",
+						"railway",
+						"app"
 					],
-					"port": "8080",
 					"path": [
+						"api",
 						"signup"
 					]
 				}
@@ -69,13 +73,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMxMDgxMDUsImlkIjoiOWFlYzE1YzItZDJmYi00NmU4LWFjYWQtZjAzMTM5ZjMyNzI0IiwibG9naW4iOiJ0ZXN0MjAyNiJ9.kRYCFlwVAjWUykaVEYBl-d6zUz9t576Rr_IPYzNFbmY",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyMDA2OTAsImlkIjoiNzZlZjY0NmYtNDgwNy00MDdkLWE4ZWUtNzAxNTU2OGZjYzJkIiwibG9naW4iOiJ0ZXN0MjAyNSJ9.Ub1-W79kUDdjfkG5mPoVSr9NXdWxg6tK5vHnIJDRCHU",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"title\": \"Котик\",\n  \"description\": \"Очень милый котик, держать его на руках - одно удовольствие\",\n  \"price\": 20000,\n  \"image_url\": \"https://cs14.pikabu.ru/post_img/big/2023/04/20/3/1681956381171584576.jpg\"\n}",
+					"raw": "{\n  \"title\": \"Котик\",\n  \"description\": \"Очень милый котик, держать его на руках - одно удовольствие\",\n  \"image_url\": \"https://cs14.pikabu.ru/post_img/big/2023/04/20/3/1681956381171584576.jpg\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -83,13 +87,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/ad",
+					"raw": "http://localhost:8080/api/ad",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"ad"
 					]
 				}
@@ -106,7 +111,7 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMxMDYzODksImlkIjoiNzZlZjY0NmYtNDgwNy00MDdkLWE4ZWUtNzAxNTU2OGZjYzJkIiwibG9naW4iOiJ0ZXN0MjAyNSJ9.LBc6udZXhucTFABU1Htv-4WJnWOTkyYot57z5liLSzo",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMyMDA2OTAsImlkIjoiNzZlZjY0NmYtNDgwNy00MDdkLWE4ZWUtNzAxNTU2OGZjYzJkIiwibG9naW4iOiJ0ZXN0MjAyNSJ9.Ub1-W79kUDdjfkG5mPoVSr9NXdWxg6tK5vHnIJDRCHU",
 						"type": "text"
 					}
 				],
@@ -120,13 +125,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/ad?page=&limit=&sort_by=created_at&order=desc&price_min=&price_max=",
+					"raw": "http://localhost:8080/api/ad?page=&limit=&sort_by=&order=&price_min=&price_max=",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"ad"
 					],
 					"query": [
@@ -140,11 +146,11 @@
 						},
 						{
 							"key": "sort_by",
-							"value": "created_at"
+							"value": ""
 						},
 						{
 							"key": "order",
-							"value": "desc"
+							"value": ""
 						},
 						{
 							"key": "price_min",

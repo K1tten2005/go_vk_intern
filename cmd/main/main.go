@@ -34,8 +34,7 @@ func initDB(logger *slog.Logger) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
-	err = pool.Ping(context.Background())
-	if err != nil {
+	if err = pool.Ping(context.Background()); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
@@ -48,8 +47,7 @@ func main() {
 	logPath := os.Getenv("MAIN_LOG_FILE")
 	logDir := "./logs"
 
-	err := os.MkdirAll(logDir, os.ModePerm)
-	if err != nil {
+	if err := os.MkdirAll(logDir, os.ModePerm); err != nil {
 		fmt.Println("failed to create logs directory: " + err.Error())
 		return
 	}
@@ -106,8 +104,7 @@ func main() {
 	}
 
 	go func() {
-		err := srv.ListenAndServe()
-		if err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil {
 			loggerVar.Error("Error while starting server: " + err.Error())
 		}
 	}()
@@ -121,8 +118,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
-	err = srv.Shutdown(ctx)
-	if err != nil {
+	if err = srv.Shutdown(ctx); err != nil {
 		loggerVar.Error("Error while stopping server: " + err.Error())
 	} else {
 		loggerVar.Info("Server successfully stopped")

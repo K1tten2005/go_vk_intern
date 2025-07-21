@@ -45,8 +45,7 @@ func (h *AdHandler) CreateAd(w http.ResponseWriter, r *http.Request) {
 		ImageURL:    req.ImageURL,
 		Price:       int(req.Price * 100.0),
 	}
-	err := validation.ValidateAd(adReq)
-	if err != nil {
+	if err := validation.ValidateAd(adReq); err != nil {
 		logger.LogHandlerError(loggerVar, err, http.StatusBadRequest)
 		sendErr.SendError(w, err.Error(), http.StatusBadRequest)
 		return
